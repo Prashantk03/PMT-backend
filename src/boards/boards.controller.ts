@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -9,9 +9,8 @@ export class BoardsController {
 
     @UseGuards(JwtAuthGuard)
     @Post()
-    async create(@Body() dto: CreateBoardDto){
-        const userId = 'dummyUserId';
-        return this.boardsService.create(dto, userId);
+    async create(@Body() dto: CreateBoardDto, @Request() req){
+        return this.boardsService.create(dto, req.user.userId);
     }
 
     @Get()

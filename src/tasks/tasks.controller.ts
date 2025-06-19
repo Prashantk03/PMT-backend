@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, UseGuards, Request } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -9,13 +9,14 @@ export class TasksController {
 
     @UseGuards(JwtAuthGuard)
     @Post()
-    async create(@Body() dto: CreateTaskDto) {
-        const userId = 'dummyUserId';
-        return this.tasksService.create(dto, userId);
+    create(@Body() dto: CreateTaskDto, @Request() req) {
+        return this.tasksService.create(dto, req.user.userId);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get()
-    async getByBoard(@Query('boardId') boardId: string){
-        return this.tasksService.findByBoard(boardId);
+    async getByBoard(@Query('boardId') boardId: string, @Request() req) {
+        return this.tasksService.findByBoard(boardId, req.user.userId);
     }
+
 }
