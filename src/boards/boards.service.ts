@@ -9,14 +9,18 @@ export class BoardsService {
     constructor(@InjectModel(Board.name) private boardModel: Model<BoardDocument>){}
 
     async create(createBoardDto: CreateBoardDto, userId: string): Promise<Board>{
-        return this.boardModel.create({ ...createBoardDto, createdBY: userId });
+        return this.boardModel.create({ ...createBoardDto, createdBy: userId });
     }
 
-    async findAll(): Promise<Board[]> {
-        return this.boardModel.find().exec();
+    async findById(id: string): Promise<Board | null> {
+        return this.boardModel.findById(id).exec();
     }
 
     async findByUser(userId: string): Promise<Board[]> {
         return this.boardModel.find({ createdBy:userId }).exec();
     }
+
+     async remove(id: string, userId: string) {
+    return this.boardModel.findOneAndDelete({ _id: id, createdBy: userId });
+  }
 }
