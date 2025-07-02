@@ -45,4 +45,28 @@ export class TasksController {
   remove(@Param('id') id: string, @Request() req) {
     return this.tasksService.remove(id, req.user.userId);
   }
+
+  // Comment route
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/comments')
+  async addComment(
+    @Param('id') taskId: string,
+    @Body('text') text: string,
+    @Request() req
+  ) {
+    return this.tasksService.addComment(taskId, {
+      text,
+      author: req.user.email,
+    })
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':taskId/comments/:commentId')
+  async deleteComment(
+    @Param('taskId') taskId: string,
+    @Param('commentId') commentId: string,
+    @Request() req
+  ){
+    return this.tasksService.deleteComment(taskId, commentId, req.user.userId);
+  }
 }
